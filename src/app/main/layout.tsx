@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="eng">
+    <html>
       <body className={`${poppins.variable} font-sans antialiased`}>
         <div className="flex min-h-screen">
           <main className="flex-1 overflow-y-auto bg-white p-2 lg:p-4 text-black">

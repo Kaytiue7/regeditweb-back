@@ -15,7 +15,50 @@ datasource db {
 }
 
 model MainPageSection {
-  id           String @id @default(uuid()) // Otomatik benzersiz ID
-  sectionName  String @unique // Bölüm adı (main-begining, main-middle-first, vb.)
-  content      Json   // JSON verisini depolamak için Json tipi
+  id          String   @id @default(uuid())
+  sectionName String   @unique
+  content     Json
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MainPageOrder {
+  id          String   @id @default(uuid())
+  sectionId   String   @unique
+  sectionName String
+  order       Int
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutPageSection {
+  id          String   @id @default(uuid())
+  sectionName String   @unique
+  content     Json
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutPageOrder {
+  id          String   @id @default(uuid())
+  sectionId   String   @unique
+  sectionName String
+  order       Int
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ContactPageSection {
+  id          String   @id @default(uuid())
+  sectionName String   @unique
+  content     Json
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
