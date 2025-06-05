@@ -220,10 +220,9 @@ export default function MainPageOrder() {
           </DndContext>
 
           <div className="mt-10 flex justify-end fixed bottom-5 right-5 transition-transform duration-300 hover:scale-105">
-            <button
+            <div
               onClick={handleSave}
-              disabled={isSaving}
-              className={`relative ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`relative ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <SaveButton />
               {isSaving && (
@@ -231,7 +230,7 @@ export default function MainPageOrder() {
                   <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               )}
-            </button>
+            </div>
           </div>
         </div>
       </div>
