@@ -5,20 +5,29 @@ export async function POST(request: Request) {
   try {
     const { orders } = await request.json();
 
-    // Önce mevcut sıralamaları temizle
-    await prisma.mainPageOrder.deleteMany({});
+    if (!orders || !Array.isArray(orders)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid request data' },
+        { status: 400 }
+      );
+    }
 
-    // Yeni sıralamaları ekle
-    const savedOrders = await prisma.mainPageOrder.createMany({
-      data: orders.map((order: any) => ({
-        sectionId: order.sectionId,
-        sectionName: order.sectionName,
-        order: order.order,
-        isVisible: order.isVisible,
-      })),
+    // Önce mevcut sıralamaları temizle
+    await prisma.$transaction(async (tx) => {
+      await tx.mainPageOrder.deleteMany({});
+
+      // Yeni sıralamaları ekle
+      await tx.mainPageOrder.createMany({
+        data: orders.map((order: any) => ({
+          sectionId: order.sectionId,
+          sectionName: order.sectionName,
+          order: order.order,
+          isVisible: order.isVisible,
+        })),
+      });
     });
 
-    return NextResponse.json({ success: true, data: savedOrders });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
