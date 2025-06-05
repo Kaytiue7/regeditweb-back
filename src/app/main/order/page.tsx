@@ -16,17 +16,16 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy, 
-  rectSortingStrategy,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import SaveButton from '@/components/SaveButton';
 
 interface Component {
   id: string;
   title: string;
   description: string;
 }
-import SaveButton from '@/components/SaveButton';
 
 function SortableItem({ component, index }: { component: Component; index: number }) {
   const {
@@ -58,15 +57,13 @@ function SortableItem({ component, index }: { component: Component; index: numbe
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-medium text-sm">
-            {index}
+            {index + 1}
           </div>
           <div>
             <h3 className="text-lg font-medium text-gray-800">
               {component.title}
             </h3>
-            <p className="text-sm text-gray-600">
-              {component.description}
-            </p>
+            <p className="text-sm text-gray-600">{component.description}</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -76,12 +73,7 @@ function SortableItem({ component, index }: { component: Component; index: numbe
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 8h16M4 16h16"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
           </svg>
         </div>
       </div>
@@ -100,17 +92,10 @@ export default function MainPageOrder() {
 
   const sensors = useSensors(
     useSensor(TouchSensor, {
-      // Dokunmatik ekran hassasiyetini artır
-      activationConstraint: {
-        delay: 0,
-        tolerance: 5,
-      },
+      activationConstraint: { delay: 0, tolerance: 5 },
     }),
     useSensor(PointerSensor, {
-      // Fare hassasiyetini artır
-      activationConstraint: {
-        distance: 5,
-      },
+      activationConstraint: { distance: 5 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -124,7 +109,6 @@ export default function MainPageOrder() {
       setComponents((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
-
         return arrayMove(items, oldIndex, newIndex);
       });
     }
@@ -134,9 +118,10 @@ export default function MainPageOrder() {
     const order = components.map((component, index) => ({
       id: component.id,
       title: component.title,
-      order: index
+      order: index,
     }));
     console.log('Yeni sıralama:', order);
+    // API'ye gönderilecekse buraya fetch vs. eklenebilir
   };
 
   return (
@@ -147,32 +132,23 @@ export default function MainPageOrder() {
             Bileşenleri sürükleyip bırakarak sıralayabilirsiniz. Sıralama, anasayfada görünecek sırayı belirler.
           </p>
 
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={components.map((c) => c.id)}
-              strategy={verticalListSortingStrategy}
-            >
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={components.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-4">
                 {components.map((component, index) => (
-                  <SortableItem
-                    key={component.id}
-                    component={component}
-                    index={index}
-                  />
+                  <SortableItem key={component.id} component={component} index={index} />
                 ))}
               </div>
             </SortableContext>
           </DndContext>
 
-          <div onClick={handleSave} className="mt-10 flex justify-end fixed bottom-5 right-5">
-            <SaveButton/>
+          <div className="mt-10 flex justify-end fixed bottom-5 right-5">
+            <button onClick={handleSave}>
+              <SaveButton />
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}
