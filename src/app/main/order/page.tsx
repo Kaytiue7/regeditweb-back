@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -122,15 +122,62 @@ function SortableItem({ component, index, onToggleVisibility }: {
 }
 
 export default function MainPageOrder() {
-  const [components, setComponents] = useState<Component[]>([
+  const [components, setComponents] = useState<Component[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const defaultComponents: Component[] = [
     { id: 'Begining', title: 'Başlangıç Bölümü', description: 'Sayfanın başlangıç kısmı', isVisible: true },
     { id: 'MiddlePageFirst', title: 'Orta Bölüm 1', description: 'Sayfanın orta bölümü 1', isVisible: true },
     { id: 'MiddlePageSecond', title: 'Orta Bölüm 2', description: 'Sayfanın orta bölümü 2', isVisible: true },
     { id: 'MiddlePageThird', title: 'Orta Bölüm 3', description: 'Sayfanın orta bölümü 3', isVisible: true },
     { id: 'CompanyInfo', title: 'Şirket Bilgileri', description: 'Şirket tanıtım bilgileri', isVisible: true },
-  ]);
+  ];
 
-  const [isSaving, setIsSaving] = useState(false);
+  const fetchOrderData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/main-page-order');
+      if (!response.ok) {
+        throw new Error('Veri çekme işlemi başarısız oldu');
+      }
+      const data = await response.json();
+      
+      if (data.success && data.data && data.data.length > 0) {
+        const updatedComponents = data.data.map((section: any) => ({
+          id: section.id,
+          title: section.sectionName,
+          description: section.content?.description || '',
+          isVisible: section.isVisible
+        }));
+        setComponents(updatedComponents);
+      } else {
+        await fetch('/api/main-page-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orders: defaultComponents.map((component, index) => ({
+              sectionName: component.title,
+              order: index,
+              isVisible: component.isVisible,
+            })),
+          }),
+        });
+        await fetchOrderData();
+      }
+    } catch (error) {
+      console.error('Veri çekme hatası:', error);
+      toast.error('Veriler yüklenirken bir hata oluştu');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrderData();
+  }, []);
 
   const sensors = useSensors(
     useSensor(TouchSensor, {
@@ -168,7 +215,6 @@ export default function MainPageOrder() {
     try {
       setIsSaving(true);
       const order = components.map((component, index) => ({
-        sectionId: component.id,
         sectionName: component.title,
         order: index,
         isVisible: component.isVisible,
@@ -186,6 +232,7 @@ export default function MainPageOrder() {
         throw new Error('Kaydetme işlemi başarısız oldu');
       }
 
+      await fetchOrderData();
       toast.success('Sıralama başarıyla kaydedildi');
     } catch (error) {
       console.error('Kaydetme hatası:', error);
@@ -194,6 +241,14 @@ export default function MainPageOrder() {
       setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 min-h-screen">
