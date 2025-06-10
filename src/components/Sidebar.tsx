@@ -48,7 +48,7 @@ const navigation = [
     name: 'Ürünlerimiz', 
     href: '/products', 
     icon: Package,
-    hasSubsections: true,
+    hasSubsections: false,
     subsections: [
       { name: 'Sayfa', href: '/products/page' },
       { name: 'Sıralama', href: '/products/order' }
