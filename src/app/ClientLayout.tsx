@@ -1,5 +1,4 @@
-'use client';
-
+'use client' 
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer"; 
@@ -10,9 +9,7 @@ export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+}) { 
   const [isLoading, setIsLoading] = useState(true);
 
   return (

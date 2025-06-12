@@ -31,9 +31,9 @@ export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
-    description: '',
-    categoryId: '',
-    image: ''
+  description: '',
+  categoryId: '',
+  images: [] as { img: string; default: boolean }[]
   });
 
   // Ürünleri ve kategorileri yükle
@@ -75,7 +75,7 @@ export default function ProductsPage() {
       if (response.ok) {
         toast.success('Ürün başarıyla eklendi');
         setIsModalOpen(false);
-        setNewProduct({ name: '', description: '', categoryId: '', image: '' });
+        setNewProduct({ name: '', description: '', categoryId: '', images: [] });
         loadData();
       } else {
         toast.error(data.error || 'Ürün eklenemedi');
@@ -156,7 +156,7 @@ export default function ProductsPage() {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setNewProduct({ name: '', description: '', categoryId: '', image: '' });
+          setNewProduct({ name: '', description: '', categoryId: '', images: [] });
         }}
         onSave={handleAddProduct}
         product={newProduct}

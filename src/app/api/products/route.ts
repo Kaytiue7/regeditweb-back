@@ -20,7 +20,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, description, categoryId, image } = body;
+    const { name, description, categoryId, images } = body;
 
     if (!name || !categoryId) {
       return NextResponse.json(
@@ -35,7 +35,10 @@ export async function POST(request: Request) {
         description,
         categoryId,
         images: {
-          create: image ? [{ url: image, isDefault: true }] : []
+          create: images?.map((img: { img: string; default: boolean }) => ({
+            url: img.img,
+            isDefault: img.default,
+          })) ?? []
         }
       },
       include: {
@@ -76,10 +79,15 @@ export async function DELETE(request: Request) {
   }
 }
 
+// PUT /api/products - Ürün güncelle
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, name, description, category, image } = body;
+    const { id, name, description, category, images } = body;
+
+    if (!id || !name || !category || !images) {
+      return NextResponse.json({ error: 'Eksik veri gönderildi' }, { status: 400 });
+    }
 
     const product = await prisma.product.update({
       where: { id },
@@ -92,9 +100,9 @@ export async function PUT(request: Request) {
             create: { name: category },
           },
         },
-        image: {
-          deleteMany: {},
-          create: image.map((img: { img: string; default: boolean }) => ({
+        images: {
+          deleteMany: {}, // Tüm eski görselleri sil
+          create: images.map((img: { img: string; default: boolean }) => ({
             url: img.img,
             isDefault: img.default,
           })),
@@ -102,7 +110,7 @@ export async function PUT(request: Request) {
       },
       include: {
         category: true,
-        image: true,
+        images: true,
       },
     });
 
@@ -110,4 +118,4 @@ export async function PUT(request: Request) {
   } catch (error) {
     return NextResponse.json({ error: 'Ürün güncellenirken bir hata oluştu' }, { status: 500 });
   }
-} 
+}

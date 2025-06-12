@@ -61,7 +61,7 @@ export default function RootLayout({
 
             <div className="px-14 py-8">
               <div className="rounded-lg border border-gray-200 shadow-sm px-4 py-8" >
-                {children}
+            {children}
               </div>
             </div>
           </main>
