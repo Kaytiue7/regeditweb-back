@@ -32,6 +32,7 @@ export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -114,6 +115,11 @@ export default function ProductsPage() {
     setIsGalleryModalOpen(true);
   };
 
+  // Filtrelenmiş ürünleri hesapla
+  const filteredProducts = products.filter(product => 
+    selectedCategory === 'all' || product.categoryId === selectedCategory
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -126,8 +132,31 @@ export default function ProductsPage() {
         </button>
       </div>
 
+      {/* Kategori Filtreleme */}
+      <div className="flex flex-wrap gap-2 items-center">
+        <span className="text-sm font-medium text-gray-600">Kategori:</span>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500
+            text-sm text-gray-700 bg-white hover:border-blue-500 transition-colors"
+        >
+          <option value="all">Tümü</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Ürün Sayısı */}
+      <div className="text-sm text-gray-500">
+        {filteredProducts.length} ürün bulundu
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {products.map((product) => {
+        {filteredProducts.map((product) => {
           const defaultImage = product.images.find(img => img.isDefault) || product.images[0];
           
           return (
@@ -139,7 +168,7 @@ export default function ProductsPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-medium text-gray-800">{product.name}</h3>
-                  <p className="text-sm text-gray-500">{product.category.name}</p>
+                  <p className="text-sm text-gray-500">/{product.category.name}</p>
                   <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
                 </div>
                 <button
@@ -147,7 +176,7 @@ export default function ProductsPage() {
                     e.stopPropagation();
                     handleDeleteProduct(product.id);
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700 hover:cursor-pointer"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -159,7 +188,7 @@ export default function ProductsPage() {
                   <img
                     src={defaultImage.url}
                     alt={product.name}
-                    className="w-full h-32 object-cover rounded-md"
+                    className="w-full min-h-32 object-cover rounded-md"
                   />
                 </div>
               )}

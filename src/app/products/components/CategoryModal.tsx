@@ -50,7 +50,7 @@ export default function CategoryModal({
       
       {/* Modal */}
       <div 
-        className={`fixed right-0 top-0 h-full min-w-64 max-w-1/4 bg-white shadow-lg
+        className={`fixed right-0 top-0 h-full w-1/5 bg-white shadow-lg
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
         onClick={e => e.stopPropagation()}

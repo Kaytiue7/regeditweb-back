@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import { FaAngleLeft, FaChevronRight, FaAngleRight } from "react-icons/fa6";
+import { FaAngleLeft, FaChevronRight } from "react-icons/fa6";
 
 interface Props {
   product: {
@@ -88,13 +88,6 @@ export default function ProductGalleryModal({ product, isOpen, onClose }: Props)
             </span>
             <p className="md:text-lg my-3 text-xs text-gray-600 whitespace-pre-line">{product.description}</p>
           </div>
-          <a 
-            href="/contact" 
-            className='sm:mt-3 bg-sky-transparent mt-1 self-end float-right cursor-pointer hover:bg-[#123466] hover:text-white rounded-2xl py-2 px-4 flex items-center justify-center gap-2 border-1 border-[#123466] transition duration-300'
-          >
-            <p className="sm:text-xl text-sm">İletişime Geç</p>
-            <FaAngleRight className="md:text-sm text-xs"/>
-          </a>
         </div>
       </div>
     </div>
