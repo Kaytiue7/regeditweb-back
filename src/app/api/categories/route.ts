@@ -11,7 +11,11 @@ export async function GET() {
     });
     return NextResponse.json(categories);
   } catch (error) {
-    return NextResponse.json({ error: 'Kategoriler getirilemedi' }, { status: 500 });
+    console.error('Kategoriler yüklenirken hata:', error);
+    return NextResponse.json(
+      { error: 'Kategoriler yüklenirken bir hata oluştu' },
+      { status: 500 }
+    );
   }
 }
 
@@ -34,7 +38,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(category);
   } catch (error) {
-    return NextResponse.json({ error: 'Kategori eklenemedi' }, { status: 500 });
+    console.error('Kategori eklenirken hata:', error);
+    return NextResponse.json(
+      { error: 'Kategori eklenirken bir hata oluştu' },
+      { status: 500 }
+    );
   }
 }
 
@@ -45,7 +53,10 @@ export async function DELETE(request: Request) {
     const id = searchParams.get('id');
 
     if (!id) {
-      return NextResponse.json({ error: 'Kategori ID gerekli' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Kategori ID\'si gerekli' },
+        { status: 400 }
+      );
     }
 
     // Önce kategoriye ait ürünleri kontrol et
@@ -67,6 +78,10 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ message: 'Kategori başarıyla silindi' });
   } catch (error) {
-    return NextResponse.json({ error: 'Kategori silinemedi' }, { status: 500 });
+    console.error('Kategori silinirken hata:', error);
+    return NextResponse.json(
+      { error: 'Kategori silinirken bir hata oluştu' },
+      { status: 500 }
+    );
   }
 } 

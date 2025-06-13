@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import ImageUpload from '@/tools/ImageUpload';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -24,8 +23,17 @@ export default function CategoryModal({
   category,
   setCategory 
 }: CategoryModalProps) {
-  const handleImageChange = (base64Image: string) => {
-    setCategory(prev => ({ ...prev, image: base64Image }));
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave();
+    } catch (error) {
+      console.error('Kayıt hatası:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -49,8 +57,7 @@ export default function CategoryModal({
       >
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 transform transition-all duration-300
-              ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}">
+            <h2 className="text-xl font-semibold text-gray-800">
               Yeni Kategori Ekle
             </h2>
             <button 
@@ -72,15 +79,6 @@ export default function CategoryModal({
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500
                 transform transition-all duration-300 hover:border-blue-500"
             />
-            
-            {/* Image Upload Section */}
-            <div className="space-y-2">
-              <ImageUpload
-                onImageChange={handleImageChange}
-                id="category-image"
-                initialImageUrl={category.image}
-              />
-            </div>
 
             <div className="flex justify-end space-x-3">
               <button
@@ -91,11 +89,20 @@ export default function CategoryModal({
                 İptal
               </button>
               <button
-                onClick={onSave}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-950 hover:bg-blue-900 rounded-md
-                  transform transition-all duration-200 hover:scale-105"
+                onClick={handleSave}
+                disabled={isSaving}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-md
+                  transform transition-all duration-200 hover:scale-105
+                  ${isSaving ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-950 hover:bg-blue-900'}`}
               >
-                Kaydet
+                {isSaving ? (
+                  <div className="flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 mr-2 border-2 border-white rounded-full border-t-transparent" viewBox="0 0 24 24"></svg>
+                    Kaydediliyor...
+                  </div>
+                ) : (
+                  'Kaydet'
+                )}
               </button>
             </div>
           </div>
